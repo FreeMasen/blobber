@@ -2,5 +2,7 @@
 name = "blobber"
 version = "0.1.0"
 authors = ["FreeMasen"]
+description = "Create an arbitrary length of string."
+license = "MIT"
 
 [dependencies]
