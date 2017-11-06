@@ -20,7 +20,7 @@ pub fn get_string(bytes: usize, template: &str, numbered: bool) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn lorem_test() {
         let test_val = get_lorem(1024, true);
