@@ -1,3 +1,17 @@
+//! Utility for generating random blobs of data
+//! ```
+//! let lorem = get_lorem(1024, true);
+//! assert!(lorem.as_bytes() >= 1024);
+//!
+//! let junk = get_string(1024, "junk", false);
+//! assert!(junk.as_bytes() >= 1024);
+//!
+//! let blob = get_blob(1024, &[1, 2, 3]);
+//! assert!(test_val.len() >= 1024);
+//! ```
+
+extern crate rand;
+
 /// This function returns a string at least as long as the
 /// `bytes` parameter. The `numbered` will prefix each iteration
 /// of lorem ipsum.
@@ -11,7 +25,7 @@ pub fn get_lorem(bytes: usize, numbered: bool) -> String {
 /// the number of times required to reach the `bytes`
 /// exceeding the value if it doesn't evenly divide into the `bytes`
 /// if `numbered` is true, each iteration will be extened by the number
-/// plus '.' and a space (this will increase the overflow)
+/// plus '.' and a space. Any overflow will be truncated
 pub fn get_string(bytes: usize, template: &str, numbered: bool) -> String {
     let mut ret = String::new();
     if numbered {
@@ -23,8 +37,30 @@ pub fn get_string(bytes: usize, template: &str, numbered: bool) -> String {
             ret.push_str(format!("{}", template).as_str());
         }
     }
+    ret.truncate(bytes);
     ret
 }
+
+pub fn get_rng_blob(bytes: usize) -> Vec<u8> {
+    let mut ret: Vec<u8> = Vec::new();
+    while ret.len() < bytes {
+        ret.push(rand::random());
+    }
+    ret
+}
+
+/// Get a vector of u8 values the length of the bytes param
+/// the template param will be repeated to fill the return
+/// value
+pub fn get_blob(bytes: usize, template: &[u8]) -> Vec<u8> {
+    let mut ret: Vec<u8> = Vec::new();
+    for _ in 0..((bytes / template.len() as usize) + 1) {
+        ret.extend(template);
+    }
+    ret.truncate(bytes);
+    ret
+}
+
 
 #[cfg(test)]
 mod tests {
@@ -34,17 +70,31 @@ mod tests {
     fn lorem_test() {
         let test_val = get_lorem(1024, true);
         let test_val_len = test_val.as_bytes().len();
-        println!("test value length {}", test_val_len);
-        assert!(test_val_len >= 1024);
+        assert_eq!(test_val_len, 1024);
     }
 
     #[test]
     fn non_lorem_test() {
         let template = "test";
         let test_val = get_string(1024, template, false);
-        assert!(test_val.as_bytes().len() >= 1024);
+        assert_eq!(test_val.as_bytes().len(), 1024);
         assert!(test_val.contains(template));
         let empty_test = test_val.replace(template, "");
-        assert!(empty_test.len() < 1);
+        assert_eq!(empty_test.len(), 0);
+    }
+
+    #[test]
+    fn blob_test() {
+        let template = &[1, 2, 3];
+        let test_val = get_blob(1024, template);
+        assert!(test_val.len() >= 1024);
+        let bytes = get_blob(6, template);
+        assert_eq!(bytes, &[1, 2, 3, 1, 2, 3]);
+    }
+
+    #[test]
+    fn rng_blob_test() {
+        let test_val = get_rng_blob(1024);
+        assert_eq!(test_val.len(), 1024);
     }
 }
