@@ -6,4 +6,3 @@ description = "Create an arbitrary length of string."
 license = "MIT"
 
 [dependencies]
-rand = "^0.3"

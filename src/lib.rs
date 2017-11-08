@@ -10,8 +10,8 @@
 //! assert!(test_val.len() >= 1024);
 //! ```
 
-extern crate rand;
-
+mod rand;
+use rand::{Rng};
 /// This function returns a string at least as long as the
 /// `bytes` parameter. The `numbered` will prefix each iteration
 /// of lorem ipsum.
@@ -20,7 +20,7 @@ pub fn get_lorem(bytes: usize, numbered: bool) -> String {
     get_string(bytes, lorem, numbered)
 }
 
-/// This function returns a string at least as long as the
+/// This function returns a string length of the
 /// `bytes` parameter. The `template` `&str` will be repeated
 /// the number of times required to reach the `bytes`
 /// exceeding the value if it doesn't evenly divide into the `bytes`
@@ -41,10 +41,29 @@ pub fn get_string(bytes: usize, template: &str, numbered: bool) -> String {
     ret
 }
 
+/// This function returns a vector of bytes generated
+/// with a very simple PRNG provided by the Rng struct.
+/// The rng will be seeded with the default seed
 pub fn get_rng_blob(bytes: usize) -> Vec<u8> {
     let mut ret: Vec<u8> = Vec::new();
+    let mut rng = Rng::default();
     while ret.len() < bytes {
-        ret.push(rand::random());
+        ret.push(rng.next());
+    }
+    ret
+}
+
+/// This function returns a vector of bytes generated
+/// with a very simple PRNG provided by the Rng struct.
+/// the rng will be seeded with the provided seed param.
+/// This is useful for genrating a repeatable blob (the same
+/// seed will always provide the same sequence) if you don't want to
+/// provide a template slice.
+pub fn get_seeded_rng_blob(bytes: usize, seed: u8) -> Vec<u8> {
+    let mut ret: Vec<u8> = Vec::new();
+    let mut rng = Rng::new(seed);
+    while ret.len() < bytes {
+        ret.push(rng.next());
     }
     ret
 }
