@@ -1,8 +1,9 @@
 [package]
 name = "blobber"
-version = "0.1.4"
+version = "0.1.5"
 authors = ["FreeMasen"]
 description = "Create an arbitrary length of string."
 license = "MIT"
+repository = "https://github.com/freemasen/blobber"
 
 [dependencies]
