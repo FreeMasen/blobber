@@ -1,14 +1,4 @@
 //! Utility for generating random blobs of data
-//! ```
-//! let lorem = get_lorem(1024, true);
-//! assert!(lorem.as_bytes() >= 1024);
-//!
-//! let junk = get_string(1024, "junk", false);
-//! assert!(junk.as_bytes() >= 1024);
-//!
-//! let blob = get_blob(1024, &[1, 2, 3]);
-//! assert!(test_val.len() >= 1024);
-//! ```
 use std::ops::AddAssign;
 mod rand;
 use rand::{Rng};
