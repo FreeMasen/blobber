@@ -1,18 +1,5 @@
 //! This module provies PRNG to generate
 //! a string of random u8s
-//! #### Examples
-//! ```
-//! let rng = Rng::default();
-//! let vec = Vec<u8>::new();
-//! for _ in 0..100 {
-//!     vec.push(rng.next());
-//! }
-//! let repeatable = Rng::default(145);
-//! let vec = Vec<u8>::new();
-//! for _ in 0..100 {
-//!     vec.push(repeatable.next());
-//! }
-//! ```
 use std::num::{Wrapping};
 use std::time::{SystemTime, UNIX_EPOCH};
 /// A struct for storing the required elements to perform

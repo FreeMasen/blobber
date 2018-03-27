@@ -9,12 +9,12 @@
 //! let blob = get_blob(1024, &[1, 2, 3]);
 //! assert!(test_val.len() >= 1024);
 //! ```
-
+use std::ops::AddAssign;
 mod rand;
 use rand::{Rng};
-/// This function returns a string at least as long as the
-/// `bytes` parameter. The `numbered` will prefix each iteration
-/// of lorem ipsum.
+/// This function returns a string as long as the
+/// `bytes` parameter. The `numbered` param will be
+/// passed to `get_string` 
 pub fn get_lorem(bytes: usize, numbered: bool) -> String {
     let lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
     get_string(bytes, lorem, numbered)
@@ -23,27 +23,25 @@ pub fn get_lorem(bytes: usize, numbered: bool) -> String {
 /// This function returns a string length of the
 /// `bytes` parameter. The `template` `&str` will be repeated
 /// the number of times required to reach the `bytes`
-/// exceeding the value if it doesn't evenly divide into the `bytes`
 /// if `numbered` is true, each iteration will be extened by the number
 /// plus '.' and a space. Any overflow will be truncated
 pub fn get_string(bytes: usize, template: &str, numbered: bool) -> String {
     let mut ret = String::new();
     if numbered {
         for i in 0..((bytes / template.len()) + 1) {
-            ret.push_str(format!("{}. {}", i, template).as_str());
+            ret.add_assign(&format!("{}. {}", i, template));
         }
     } else {
         while ret.as_bytes().len() < bytes {
-            ret.push_str(format!("{}", template).as_str());
+            ret.push_str(template);
         }
     }
     ret.truncate(bytes);
     ret
 }
 
-/// This function returns a vector of bytes generated
-/// with a very simple PRNG provided by the Rng struct.
-/// The rng will be seeded with the default seed
+/// This function returns a `Vec<u8>` generated
+/// with a very simple PRNG seeded with the unix epoch
 pub fn get_rng_blob(bytes: usize) -> Vec<u8> {
     let mut ret: Vec<u8> = Vec::new();
     let mut rng = Rng::default();
@@ -53,9 +51,8 @@ pub fn get_rng_blob(bytes: usize) -> Vec<u8> {
     ret
 }
 
-/// This function returns a vector of bytes generated
-/// with a very simple PRNG provided by the Rng struct.
-/// the rng will be seeded with the provided seed param.
+/// This function returns a `Vec<u8>` generated
+/// with a very simple PRNG seeded with the provided seed param.
 /// This is useful for genrating a repeatable blob (the same
 /// seed will always provide the same sequence) if you don't want to
 /// provide a template slice.
@@ -84,7 +81,7 @@ pub fn get_blob(bytes: usize, template: &[u8]) -> Vec<u8> {
 #[cfg(test)]
 mod tests {
     use super::*;
-
+    
     #[test]
     fn lorem_test() {
         let test_val = get_lorem(1024, true);
